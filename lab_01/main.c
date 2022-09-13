@@ -10,8 +10,24 @@
 #define INCORRECT_POINTS_AMOUNT_ERROR 7
 #define INCORRECT_POINT_PLACE_ERROR 8
 #define WRONG_FORMAT_ERROR 9
+#define INCORRECT_MANTISSA_LEN_ERROR 10
+#define INCORRECT_POWER_LEN_ERROR 11
 
-#define MAX_STR_LENGTH 38
+#define MAX_REAL_STR_LENGTH 39
+#define MAX_INT_STR_LENGTH 31
+#define MAX_MANTISSA_LEN 32
+#define MAX_POWER_LEN 7
+#define NOT_IN_NUM 100
+
+typedef struct
+{
+    char sign_mantissa;
+    char mantissa[MAX_MANTISSA_LEN];
+    size_t point_pos;
+    size_t E_pos;
+    char sign_power;
+    char power[MAX_POWER_LEN];
+} number_t;
 
 int str_input(char str[], const size_t max_len, size_t *len)
 {
@@ -28,20 +44,9 @@ int str_input(char str[], const size_t max_len, size_t *len)
     return EXIT_SUCCESS;
 }
 
-int E_position(char str[], size_t len, size_t *pos)
+int str_real_validation(char str[], const size_t len)
 {
-    for (size_t i = 0; i < len; i++)
-        if (str[i] == 'E')
-        {
-            *position = i;
-            return EXIT_SUCCESS;
-        }
-    return EXIT_FAILURE;
-}
-
-int str_validation(char str[], const size_t len, size_t E_position)
-{
-    size_t subtracts = 0, adds = 0, points = 0, E_letters = 0;
+    size_t subtracts = 0, adds = 0, points = 0, E_letters = 0, E_position = 0;
     if (str[0] != '+' && str[0] != '-')
     {
         printf("Error: число должно начинаться со знака '+' или '-'.\n");
@@ -71,12 +76,19 @@ int str_validation(char str[], const size_t len, size_t E_position)
         else if (str[i] == 'E')
         {
             E_letters++;
+            E_position = i;
             if (i + 1 < len && str[i + 1] != '-' && str[i + 1] != '+')
             {
                 printf("Error: число порядка должно начинаться со знака '+' или '-'.\n");
                 return WRONG_FORMAT_ERROR;
             }
         }
+    }
+
+    if (str[1] == '.' || str[E_position - 1] == '.')
+    {
+        printf("Error: неверное положение точки.\n");
+        return INCORRECT_POINT_PLACE_ERROR;
     }
 
     if (adds + subtracts != 2)
@@ -94,27 +106,105 @@ int str_validation(char str[], const size_t len, size_t E_position)
         printf("Error: по правилам записи число вводится в экспоненциальной форме!\n");
         return INCORRECT_E_LETTER_AMOUNT_ERROR;
     }
+ 
+    return EXIT_SUCCESS;
+}
 
+int str_int_validation(char str[], const size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        if ((str[i] > '9' || str[i] < '0') && str[i] != '+' && str[i] != '-')
+        {
+            printf("Error: введены некорректные символы.\n");
+            return INVALID_CHARACTERS_ERROR;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int str_to_number_t(char str[], number_t *number)
+{
+    number->sign_mantissa = str[0];
+    size_t len = strlen(str);
+    size_t i = 1;
+    while (str[i] != 'E' && i < len)
+    {
+        if (i > 31)
+        {
+            printf("Error: неверная длина мантиссы (не более 30 цифр).\n");
+            return INCORRECT_MANTISSA_LEN_ERROR;
+        }
+        number->mantissa[i - 1] = str[i];
+        if (str[i] == '.')
+            number->point_pos = i;
+        i++;
+    }
+    number->mantissa[strlen(number->mantissa)] = '\0';
+    if (i == len)
+    {
+        number->E_pos = NOT_IN_NUM;
+        number->point_pos = NOT_IN_NUM;
+        return EXIT_SUCCESS;
+    }
+    number->E_pos = i;
+    number->sign_power = str[++i];
+
+    i++;
+    size_t j = 0;
+    while (str[i] != '\0')
+    {
+        if (j > 4)
+        {
+            printf("Error: неверная длина порядка (не более 5 цифр).\n");
+            return INCORRECT_POWER_LEN_ERROR;
+        }
+        number->power[j] = str[i];
+        i++;
+        j++;
+    }
+    number->power[strlen(number->power)] = '\0';
+    
     return EXIT_SUCCESS;
 }
 
 int main(void)
 {
-    char str[MAX_STR_LENGTH];
-    size_t len = 0;
-    size_t E_position = 0;
+    char real_str[MAX_REAL_STR_LENGTH], int_str[MAX_INT_STR_LENGTH];
+    size_t len_real = 0, len_int = 0;
     int ret_code = 0;
-    ret_code = str_input(str, MAX_STR_LENGTH, &len);
-    if (!ret_code)
-        if (!E_position(str, len, &E_position))
-            ret_code = str_validation(str, len, E_position);
-    else
-        return ret_code;
 
+    ret_code = str_input(int_str, MAX_INT_STR_LENGTH + 2, &len_int);
     if (ret_code)
         return ret_code;
 
-    printf("Your input: %s\n", str);
+    ret_code = str_int_validation(int_str, len_int);
+    if (ret_code)
+        return ret_code;
+
+    ret_code = str_input(real_str, MAX_REAL_STR_LENGTH + 2, &len_real);
+    if (ret_code)
+        return ret_code;
+
+    ret_code = str_real_validation(real_str, len_real);
+    if (ret_code)
+        return ret_code;
+
+    number_t real_num, int_num;
+
+    ret_code = str_to_number_t(real_str, &real_num);
+    if (ret_code)
+        return ret_code;
+
+    ret_code = str_to_number_t(int_str, &int_num);
+    if (ret_code)
+        return ret_code;
+    
+    printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos; %c - sign2; %s - power\n", real_num.sign_mantissa, real_num.mantissa, real_num.point_pos, real_num.E_pos, real_num.sign_power, real_num.power);
+    printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos\n", int_num.sign_mantissa, int_num.mantissa, int_num.point_pos, int_num.E_pos);
+
+    printf("Your int: %s\nYour real: %s\n", int_str, real_str);
     return EXIT_SUCCESS;
 }
 
