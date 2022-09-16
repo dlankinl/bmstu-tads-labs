@@ -22,11 +22,12 @@
 typedef struct
 {
     char sign_mantissa;
-    char mantissa[MAX_MANTISSA_LEN];
+    char mantissa[MAX_MANTISSA_LEN + 1];
     size_t point_pos;
     size_t E_pos;
     char sign_power;
     char power[MAX_POWER_LEN];
+    int power_int;
 } number_t;
 
 int str_input(char str[], const size_t max_len, size_t *len)
@@ -46,7 +47,7 @@ int str_input(char str[], const size_t max_len, size_t *len)
 
 int str_real_validation(char str[], const size_t len)
 {
-    size_t subtracts = 0, adds = 0, points = 0, E_letters = 0, E_position = 0;
+    size_t subtracts = 0, adds = 0, points = 0, E_letters = 0;
     if (str[0] != '+' && str[0] != '-')
     {
         printf("Error: число должно начинаться со знака '+' или '-'.\n");
@@ -76,7 +77,6 @@ int str_real_validation(char str[], const size_t len)
         else if (str[i] == 'E')
         {
             E_letters++;
-            E_position = i;
             if (i + 1 < len && str[i + 1] != '-' && str[i + 1] != '+')
             {
                 printf("Error: число порядка должно начинаться со знака '+' или '-'.\n");
@@ -85,13 +85,7 @@ int str_real_validation(char str[], const size_t len)
         }
     }
 
-    if (str[1] == '.' || str[E_position - 1] == '.')
-    {
-        printf("Error: неверное положение точки.\n");
-        return INCORRECT_POINT_PLACE_ERROR;
-    }
-
-    if (adds + subtracts != 2)
+    if (adds + subtracts > 2)
     {
         printf("Error: по правилам записи должно быть 2 знака (мантисса и порядок)!\n");
         return NOT_ENOUGH_MATHS_SIGNS_ERROR;
@@ -101,31 +95,118 @@ int str_real_validation(char str[], const size_t len)
         printf("Error: по правилам записи должна быть 1 точка!\n");
         return INCORRECT_POINTS_AMOUNT_ERROR;
     }
-    else if (E_letters != 1)
+    else if (E_letters > 1)
     {
-        printf("Error: по правилам записи число вводится в экспоненциальной форме!\n");
+        printf("Error: по правилам записи не должно быть более одной буквы Е!\n");
         return INCORRECT_E_LETTER_AMOUNT_ERROR;
     }
  
     return EXIT_SUCCESS;
 }
 
+void number_t_str_to_int_power(number_t *number)
+{
+    int flag = 1;
+    if (number->sign_power == '-')
+        flag = -1;
+    number->power_int = atoi(number->power) * flag;
+}
+
 int str_int_validation(char str[], const size_t len)
 {
     for (size_t i = 0; i < len; i++)
-    {
         if ((str[i] > '9' || str[i] < '0') && str[i] != '+' && str[i] != '-')
         {
             printf("Error: введены некорректные символы.\n");
             return INVALID_CHARACTERS_ERROR;
         }
-    }
 
+    return EXIT_SUCCESS;
+}
+
+size_t symbol_shift(char str[], size_t start, size_t end)
+{
+    size_t shifted_on = 0;
+    for (size_t i = start - 1; i >= end; i--)
+    {
+        char tmp = str[i];
+        str[i] = str[i - 1];
+        str[i - 1] = tmp; 
+        shifted_on++;
+    }
+    return shifted_on;
+}
+
+// void left_shift(char str[])
+// {
+//     for (size_t i = 0; i < strlen(str); i++)
+//         str[i] = str[i + 1];
+// }
+
+void throw_out_zero(char str[], size_t start)
+{
+    for (size_t i = start; i < strlen(str); i++)
+    {
+        char tmp = str[i];
+        str[i] = str[i + 1];
+        str[i + 1] = tmp; 
+    }
+    str[strlen(str)] = '\0';
+}
+
+void delete_leading_zeros(number_t *number)
+{
+    while (number->mantissa[0] == '0' && number->mantissa[1] != '.')
+        // left_shift(number->mantissa);
+        throw_out_zero(number->mantissa, 0);
+}
+
+void decr_power(number_t *number)
+{
+    while (number->mantissa[2] == '0')
+    {
+        throw_out_zero(number->mantissa, 2);
+        number->power_int--;
+    }
+}
+
+int number_normalization(number_t *number)
+{
+    if (number->point_pos == 1 || (number->point_pos == 2 && number->mantissa[0] == '0' && number->mantissa[2] != '0'))
+    {
+        printf("Great\n");
+        return EXIT_SUCCESS;
+    }
+    else if (number->mantissa[2] == '0')
+    {
+        printf("%s - before deleting, %d\n", number->mantissa, number->power_int);
+        delete_leading_zeros(number);
+        decr_power(number);
+        printf("%s - string with deleted zeros, %d\n", number->mantissa, number->power_int);
+        return EXIT_SUCCESS;
+    }
+    else
+    {
+        size_t end = 1;
+        printf("%s - before normalization\n", number->mantissa);
+        size_t point_shift = symbol_shift(number->mantissa, number->point_pos, end);
+        number->mantissa[strlen(number->mantissa)] = '0';
+        symbol_shift(number->mantissa, strlen(number->mantissa), end);
+        number->point_pos = end + 1;
+        if (strlen(number->mantissa) > MAX_MANTISSA_LEN)
+            printf("OOOOPS\n");
+        number->power_int += point_shift;
+        printf("%s - after normalization, %d\n", number->mantissa, number->power_int);
+        return EXIT_SUCCESS;
+    }
     return EXIT_SUCCESS;
 }
 
 int str_to_number_t(char str[], number_t *number)
 {
+    number->E_pos = NOT_IN_NUM;
+    number->point_pos = NOT_IN_NUM;
+    number->power_int = 0;
     number->sign_mantissa = str[0];
     size_t len = strlen(str);
     size_t i = 1;
@@ -142,14 +223,12 @@ int str_to_number_t(char str[], number_t *number)
         i++;
     }
     number->mantissa[strlen(number->mantissa)] = '\0';
-    if (i == len)
-    {
-        number->E_pos = NOT_IN_NUM;
-        number->point_pos = NOT_IN_NUM;
-        return EXIT_SUCCESS;
+    
+    if (str[i] == 'E')
+    {    
+        number->E_pos = i;
+        number->sign_power = str[++i];
     }
-    number->E_pos = i;
-    number->sign_power = str[++i];
 
     i++;
     size_t j = 0;
@@ -175,6 +254,7 @@ int main(void)
     size_t len_real = 0, len_int = 0;
     int ret_code = 0;
 
+    printf("Введите, пожалуйста, целое число:\n |0                            |30\n");
     ret_code = str_input(int_str, MAX_INT_STR_LENGTH + 2, &len_int);
     if (ret_code)
         return ret_code;
@@ -183,6 +263,7 @@ int main(void)
     if (ret_code)
         return ret_code;
 
+    printf("Введите, пожалуйста, вещественное число:\n |0                            |E^|   |\n");
     ret_code = str_input(real_str, MAX_REAL_STR_LENGTH + 2, &len_real);
     if (ret_code)
         return ret_code;
@@ -200,11 +281,15 @@ int main(void)
     ret_code = str_to_number_t(int_str, &int_num);
     if (ret_code)
         return ret_code;
-    
-    printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos; %c - sign2; %s - power\n", real_num.sign_mantissa, real_num.mantissa, real_num.point_pos, real_num.E_pos, real_num.sign_power, real_num.power);
-    printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos\n", int_num.sign_mantissa, int_num.mantissa, int_num.point_pos, int_num.E_pos);
 
-    printf("Your int: %s\nYour real: %s\n", int_str, real_str);
+    number_t_str_to_int_power(&real_num);
+    // printf("Power int: %d\n", real_num.power_int);
+    
+    printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos; %d - power\n", real_num.sign_mantissa, real_num.mantissa, real_num.point_pos, real_num.E_pos, real_num.power_int);
+    // printf("%c - sign; %s - mantissa; %zu - point_pos; %zu - e_pos; %d - power\n", int_num.sign_mantissa, int_num.mantissa, int_num.point_pos, int_num.E_pos, int_num.power_int);
+
+    number_normalization(&real_num);
+
+    // printf("Your int: %s\nYour real: %s\n", int_str, real_str);
     return EXIT_SUCCESS;
 }
-
