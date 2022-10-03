@@ -1,0 +1,60 @@
+Brazil 831 Atlanta South_America Yes excursion 76 history
+Georgia 734 Phoenix Europe No beach summer 25 26 6
+Samoa 501 San_Antonio Asia No beach winter 25 26 6
+Lebanon 1514 Omaha Africa Yes excursion 8 history
+Tajikistan 1403 Oakland Asia Yes sport surfing 12000
+Congo 46 Anaheim Africa Yes excursion 243 art
+Canada 1843 Houston North_America No excursion 243 art
+San_Marino 476 Henderson Europe Yes beach summer 25 26 6
+Kyrgyzstan 1169 Pittsburgh Asia No excursion 243 art
+Luxembourg 1140 Rome Europe No sport climbing 12000
+Canada 1081 Lisbon North_America No sport surfing 12000
+Syria 1144 Tokyo Asia Yes beach spring 29 27 10
+South_Africa 1043 Escondido Yes excursion 2 history
+The_Gambia 866 Madrid Africa No beach summer 25 26 6
+Niger 262 Prague Africa Yes sport climbing 12000
+Kosovo 1485 Long_Beach Europe No excursion 23 art
+Iceland 1460 Bridgeport Europe Yes beach summer 25 26 6
+Malawi 705 Otawa Africa No sport surfing 12000
+Andorra 999 Lisbon Europe Yes excursion 12 history
+Nicaragua 1338 Valetta Africa No sport climbing 12000
+Kiribati 142 Minneapolis South_America Yes excursion 66 art
+Qatar 1507 Lisbon Asia Yes excursion 243 art
+Azerbaijan 1894 Louisville Europe No sport climbing 12000
+Kenya 714 Saint_Paul Africa Yes beach summer 25 26 6
+Saint_Kitts_and_Nevis 957 Portland South_America Yes sport climbing 12000
+Moldova 1933 Anaheim Europe Yes sport surfing 12000
+Namibia 720 Rochester Africa No excursion 764 history
+Slovakia 1307 Moreno_Valley Europe No excursion 243 art
+Uzbekistan 269 Escondido Asia Yes sport climbing 12000
+Croatia 1235 Saint_Paul Europe Yes beach summer 25 26 6
+Poland 1271 Lakewood Europe No sport climbing 12000
+Bulgaria 469 Bakersfield Europe Yes beach autumn 29 27 10
+Paraguay 1159 Rome South_America No excursion 243 art
+Togo 364 Pittsburgh Asia Yes sport surfing 12000
+Kyrgyzstan 202 Honolulu Asia Yes excursion 243 art
+Senegal 948 Columbus Africa Yes excursion 4 art
+Azerbaijan 587 Los_Angeles Europe Yes sport surfing 12000
+Palau 117 Tokyo South_America No beach summer 25 26 6
+Kiribati 903 Murfreesboro Africa Yes sport surfing 12000
+Egypt 1008 St_Louis Africa No excursion 7 history
+Montenegro 748 Bridgeport Europe No sport surfing 12000
+Iceland 462 Tallahassee Europe No excursion 243 art
+Kyrgyzstan 738 Toledo Asia No sport climbing 12000
+Mexico 7 Hayward South_America Yes beach summer 29 27 10
+Sri_Lanka 651 Charlotte Asia Yes sport alpine_ski 12000
+Tajikistan 825 Prague Asia Yes beach summer 25 26 6
+Rwanda 1874 Fremont Africa No excursion 243 art
+France 808 Hayward Europe Yes excursion 85 history
+Niger 590 Long_Beach Africa No sport surfing 12000
+Namibia 1553 Louisville Africa Yes excursion 23 art
+Norway 393 Jersey_City Europe No beach summer 25 26 6
+Malta 1497 San_Bernardino Europe Yes sport alpine_ski 12000
+Laos 585 Memphis South_America No sport surfing 12000
+Kazakhstan 1330 Bakersfield Asia No excursion 23 history
+Jordan 1602 Garland Asia No sport climbing 12000
+South_Africa 1774 El_Paso Africa Yes beach winter 29 27 10
+The_Bahamas 289 Atlanta Asia Yes beach summer 25 26 6
+Gabon 1253 Valetta Africa No excursion 8 art
+Paraguay 1902 Fremont South_America Yes excursion 243 art
+Antigua_and_Barbuda 90 Lakewood South_America Yes excursion 243 art

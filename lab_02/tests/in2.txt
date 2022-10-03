@@ -10,4 +10,3 @@ Japan 126 Tokyo Asia Yes excursion 123 history
 USA 330 WashingtonDC North_America Yes excursion 94 nature
 Canada 38 Ottawa North_America Yes excursion 342 nature
 Chile 19 Santiago South_America No sport climbing 37000
-China 1400 Beijing Asia Yes 300 history
