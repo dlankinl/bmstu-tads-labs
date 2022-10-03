@@ -9,6 +9,7 @@
 #define MAX_SPORT_KIND_LEN 10
 #define MAX_STR_LEN 63
 #define MAX_AMOUNT 500
+#define MAX_STR_VAC 4
 
 typedef struct
 {
@@ -30,13 +31,6 @@ typedef struct
     size_t min_price;
 } sport_t;
 
-// typedef union
-// {
-//     excursion_t excursion;
-//     beach_t beach;
-//     sport_t sport;
-// } holiday_t;
-
 typedef struct
 {
     size_t type;
@@ -54,7 +48,7 @@ typedef struct
     size_t population;
     char capital[MAX_STR_LEN + 1];
     char continent[MAX_STR_LEN + 1];
-    size_t vaccination;
+    char vaccination[MAX_STR_VAC];
     holiday_t holiday_type;
 } country_t;
 

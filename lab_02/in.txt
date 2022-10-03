@@ -1,17 +1,13 @@
-12
-Russia 144 Moscow Eurasia 0 excursion 32 history
-Czech_Republic 11 Prague Europe 1 excursion 43 history
-Maldives 1 Male Asia 0 beach winter 29 27 10
-France 67 Paris Europe 1 excursion 102 art
-Thailand 70 Bangkok Asia 0 beach winter 28 27 12
-Georgia 4 Tbilisi Europe 1 sport alpine_ski 12000
-Spain 47 Madrid Europe 1 beach autumn 19 23 7
-Indonesia 274 Jakarta Asia 0 sport surfing 50000
-Japan 126 Tokyo Asia 1 excursion 123 history
-USA 330 WashingtonDC North_America 1 excursion 94 nature
-Canada 38 Ottawa North_America 1 excursion 342 nature
-Chile 19 Santiago South_America 0 sport climbing 37000
-Russia 144 Moscow Eurasia 0 summer 30 26 2
-China 1400 Beijing Asia 1 300 art
-China 1400 Beijing Asia 1 300 history
-Germany 200 Berlin Europe 1 20 art
+Russia 144 Moscow Eurasia No excursion 32 history
+Czech_Republic 11 Prague Europe Yes excursion 43 history
+Maldives 1 Male Asia No beach winter 29 27 10
+France 67 Paris Europe Yes excursion 102 art
+Thailand 70 Bangkok Asia No beach winter 28 27 12
+Georgia 4 Tbilisi Europe Yes sport alpine_ski 12000
+Spain 47 Madrid Europe Yes beach autumn 19 23 7
+Indonesia 274 Jakarta Asia No sport surfing 50000
+Japan 126 Tokyo Asia Yes excursion 123 history
+USA 330 WashingtonDC North_America Yes excursion 94 nature
+Canada 38 Ottawa North_America Yes excursion 342 nature
+Chile 19 Santiago South_America No sport climbing 37000
+China 1400 Beijing Asia Yes 300 history

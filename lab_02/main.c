@@ -25,7 +25,7 @@ void split(char str[], country_t *country, size_t *len, char type[])
         else if (*len == 3)
             strcpy(country->continent, istr);
         else if (*len == 4)
-            country->vaccination = atoi(istr);
+            strcpy(country->vaccination, istr);
         ++(*len);
         istr = strtok(NULL, " ");
     }
@@ -97,11 +97,11 @@ void print_arr(char **arr, size_t len)
 void print_country_t(country_t country, int type)
 {
     if (type == 1)
-        printf("%s %zu %s %s %zu %zu %s\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.excursion.objects, country.holiday_type.kind_t.excursion.main_type);
+        printf("%s %zu %s %s %s %zu %s\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.excursion.objects, country.holiday_type.kind_t.excursion.main_type);
     else if (type == 2)
-        printf("%s %zu %s %s %zu %s %d %d %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.beach.main_season, country.holiday_type.kind_t.beach.air_temp, country.holiday_type.kind_t.beach.water_temp, country.holiday_type.kind_t.beach.fly_time);
+        printf("%s %zu %s %s %s %s %d %d %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.beach.main_season, country.holiday_type.kind_t.beach.air_temp, country.holiday_type.kind_t.beach.water_temp, country.holiday_type.kind_t.beach.fly_time);
     else if (type == 3)
-        printf("%s %zu %s %s %zu %s %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.sport.sport_kind, country.holiday_type.kind_t.sport.min_price);
+        printf("%s %zu %s %s %s %s %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.sport.sport_kind, country.holiday_type.kind_t.sport.min_price);
 }
 
 void print_table_t(table_t table)
@@ -126,13 +126,24 @@ void print_keys(table_t table)
         printf("%zu: %s\n", table.keys[i].index, table.keys[i].country);
 }
 
+size_t file_count_elems(FILE *f, size_t *amount)
+{
+    char str[MAX_LEN];
+    while (!feof(f))
+    {
+        if (!fgets(str, MAX_LEN, f))
+            return FILE_ERROR;
+        ++(*amount);
+    }
+    return EXIT_SUCCESS;
+}
+
 size_t file_read(FILE *f, size_t *amount, table_t *table)
 {
-    if (fscanf(f, "%zu", amount) != 1)
-        return AMOUNT_READ_ERROR;
+    file_count_elems(f, amount);
+    rewind(f);
     char str[MAX_LEN];
-    fgets(str, MAX_LEN, f);
-
+    printf("\n");
     for (size_t i = 0; i < *amount; i++)
     {
         fgets(str, MAX_LEN, f);
@@ -176,11 +187,11 @@ size_t split_user_country_input(char str[])
 size_t file_add_country(FILE *f, country_t country)
 {
     if (country.holiday_type.type == 1)
-        fprintf(f, "%s %zu %s %s %zu %zu %s\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.excursion.objects, country.holiday_type.kind_t.excursion.main_type);
+        fprintf(f, "%s %zu %s %s %s %zu %s\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.excursion.objects, country.holiday_type.kind_t.excursion.main_type);
     else if (country.holiday_type.type == 2)
-        fprintf(f, "%s %zu %s %s %zu %s %d %d %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.beach.main_season, country.holiday_type.kind_t.beach.air_temp, country.holiday_type.kind_t.beach.water_temp, country.holiday_type.kind_t.beach.fly_time);
+        fprintf(f, "%s %zu %s %s %s %s %d %d %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.beach.main_season, country.holiday_type.kind_t.beach.air_temp, country.holiday_type.kind_t.beach.water_temp, country.holiday_type.kind_t.beach.fly_time);
     else if (country.holiday_type.type == 3)
-        fprintf(f, "%s %zu %s %s %zu %s %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.sport.sport_kind, country.holiday_type.kind_t.sport.min_price);
+        fprintf(f, "%s %zu %s %s %s %s %zu\n", country.country, country.population, country.capital, country.continent, country.vaccination, country.holiday_type.kind_t.sport.sport_kind, country.holiday_type.kind_t.sport.min_price);
     return EXIT_SUCCESS;
 }
 
@@ -329,13 +340,7 @@ size_t table_t_delete_by_values(table_t *table, char field[MAX_STR_LEN], char va
         }
         else if (strcmp("vaccination", field) == 0)
         {
-            size_t ch_value = atoi(value);
-            if (!ch_value)
-            {
-                printf("Введите число!\n");
-                return INCORRECT_INPUT;
-            }
-            if (table->countries[i].vaccination == ch_value)
+            if (strcmp(table->countries[i].vaccination, value) == 0)
             {
                 delete_country_t(table, i);
                 i--;
