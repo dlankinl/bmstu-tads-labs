@@ -10,7 +10,7 @@ typedef struct
     int *list_ia;
     unsigned int rows;
     unsigned int cols;
-    unsigned int non_zero_percentage;
+    unsigned int non_zero_nums;
 } sparse_matrix;
 
 typedef struct
