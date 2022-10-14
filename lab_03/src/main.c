@@ -22,11 +22,18 @@ int main(void)
         return rc;
     rc = sparse_matrix_handler(&sparse_row, &row_len);
     sparse_matrix res_row;
-    res_row.vector_a = calloc(sparse_row.cols, sizeof(int));
-    res_row.vector_ja = calloc(sparse_row.cols, sizeof(int));
-    res_row.list_ia = calloc(sparse_row.rows + 1, sizeof(int));
-    // sparse_mult(sparse_matr, sparse_row, &res_row, matr_len, row_len);
+    // res_row.vector_a = calloc(sparse_row.cols, sizeof(int));
+    // res_row.vector_ja = calloc(sparse_row.cols, sizeof(int));
+    // res_row.list_ia = calloc(sparse_row.rows + 1, sizeof(int));
+    res_row.non_zero_nums = sparse_row.cols * sparse_row.rows;
+    sparse_matrix_alloc(&res_row);
+    // // sparse_mult(sparse_matr, sparse_row, &res_row, matr_len, row_len);
     sparse_mult(sparse_matr, sparse_row, &res_row, sparse_row.cols);
+
+    unsigned int useless = 0, useful = 0;
+    list_handler(&res_row);
+    // vector_delete_useless_elems(res_row.list_ia, res_row.cols, &useless, &useful);
+    // printf("\n%d - rows, %d - cols, %d - list_len\n", res_row.rows, res_row.cols, useful);
     print_sparse_matrix_as_std_matrix(res_row, res_row.rows);
     sparse_matrix_free(&sparse_matr);
     sparse_matrix_free(&sparse_row);

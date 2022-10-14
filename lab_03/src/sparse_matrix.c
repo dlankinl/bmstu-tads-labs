@@ -57,18 +57,23 @@ void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *am
 
 void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
 {
-    unsigned int counter1 = 0;
-    unsigned int counter2 = 0;
+    unsigned int counter = 0;
     for (unsigned int i = 0; i < ia_len; i++)
     {
         for (unsigned int j = 0; j < matr.cols; j++)
         {
-            if (matr.vector_ja[counter1] == (int)j)
+            // printf("\n%u - counter\n", counter);
+            // if (counter >= matr.non_zero_nums)
+            // {
+            //     printf("%d ", 0);
+            //     break;
+            // }
+            // printf("\n%d - vector_ja, %u - counter\n", matr.vector_ja[counter], counter);
+            if (matr.vector_ja[counter] == (int)j)
             {
-                printf("%d ", matr.vector_a[counter1]);
-                // counter2++;
-                counter1++;
-                // printf("\n%u - counter1, %u - counter2\n", counter1, counter2);
+                printf("%d ", matr.vector_a[counter]);
+                if (counter < matr.non_zero_nums - 1)
+                    counter++;
             }
             else
                 printf("%d ", 0);
@@ -98,22 +103,15 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
     printf("\nВведите элементы разреженной матрицы построчно в следующем формате:\n\n"
            "elem row_numb column_numb\n\n");
     sparse_matrix_fill(matr);
-
-    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-    //     printf("%d - elem, %d - column num, %d - row num\n", matr->vector_a[i], matr->vector_ja[i], matr->list_ia[i]);
     list_handler(matr);
-    // printf("\n");
-    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-    //     printf("%d - elem, %d - column num, %d - row num\n", matr->vector_a[i], matr->vector_ja[i], matr->list_ia[i]);
+
     unsigned int amount = 0;
-    // unsigned int new_len = 0;
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &amount, list_len);
-    // printf("\n");
-    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-        // printf("%d - elem, %d - column num\n", matr->vector_a[i], matr->vector_ja[i]);
     matr->list_ia[*list_len] = matr->non_zero_nums;
     matr->list_ia = realloc(matr->list_ia, (*list_len + 1) * sizeof(int));
 
+    // printf("\n%d - rows, %d - cols, %d - list_len\n", matr->rows, matr->cols, *list_len);
     print_sparse_matrix_as_std_matrix(*matr, *list_len);
+
     return EXIT_SUCCESS;
 }
