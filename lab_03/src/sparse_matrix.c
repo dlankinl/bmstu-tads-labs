@@ -9,16 +9,9 @@ size_t sparse_matrix_fill(sparse_matrix *matr)
     return EXIT_SUCCESS;
 }
 
-void sparse_matrix_free(sparse_matrix *matr)
-{
-    free(matr->vector_a);
-    free(matr->vector_ja);
-    free(matr->list_ia);
-}
-
 void list_handler(sparse_matrix *matr)
 {
-    int *tmp = calloc(matr->non_zero_nums, sizeof(int));
+    int *tmp = malloc(matr->non_zero_nums * sizeof(int));
     for (unsigned int i = 0; i < matr->non_zero_nums; i++)
         tmp[i] = matr->list_ia[i];
     for (unsigned int i = 1; i < matr->non_zero_nums; i++)
@@ -28,6 +21,7 @@ void list_handler(sparse_matrix *matr)
         else
             matr->list_ia[i] = USELESS;
     }
+    free(tmp);
 }
 
 void shift_to_end(int *vector, unsigned int len, unsigned int pos)
@@ -40,9 +34,16 @@ void shift_to_end(int *vector, unsigned int len, unsigned int pos)
     }
 }
 
+void print_vector(int *vector, unsigned int len)
+{
+    for (unsigned int i = 0; i < len; i++)
+        printf("%d ", vector[i]);
+    printf("\n");
+}
+
 void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *amount_useless, unsigned int *amount_useful)
 {
-    for (unsigned int i = len; i; i--)
+    for (int i = len - 1; i >= 0; i--)
     {
         if (vector[i] == USELESS)
         {
@@ -62,11 +63,12 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
     {
         for (unsigned int j = 0; j < matr.cols; j++)
         {
-            if (matr.vector_ja[counter2] == (int)j)
+            if (matr.vector_ja[counter1] == (int)j)
             {
                 printf("%d ", matr.vector_a[counter1]);
-                counter2++;
+                // counter2++;
                 counter1++;
+                // printf("\n%u - counter1, %u - counter2\n", counter1, counter2);
             }
             else
                 printf("%d ", 0);
@@ -74,14 +76,6 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
         printf("\n");
     }
 }
-
-// void sparse_matrix_to_std_matrix(sparse_matrix matr, size_t ia_len)
-// {
-//     for (size_t i = 0; i < ia_len; i++)
-//     {
-
-//     }
-// }
 
 size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
 {
@@ -99,26 +93,7 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
         return INCORRECT_INPUT;
     }
 
-    matr->vector_a = calloc(matr->non_zero_nums, sizeof(int));
-    if (matr->vector_a == NULL)
-    {
-        printf("Ошибка выделения памяти!\n");
-        return ALLOC_ERROR;
-    }
-
-    matr->vector_ja = calloc(matr->non_zero_nums, sizeof(int));
-    if (matr->vector_ja == NULL)
-    {
-        printf("Ошибка выделения памяти!\n");
-        return ALLOC_ERROR;
-    }
-
-    matr->list_ia = calloc(matr->non_zero_nums, sizeof(int));
-    if (matr->list_ia == NULL)
-    {
-        printf("Ошибка выделения памяти!\n");
-        return ALLOC_ERROR;
-    }
+    sparse_matrix_alloc(matr);
 
     printf("\nВведите элементы разреженной матрицы построчно в следующем формате:\n\n"
            "elem row_numb column_numb\n\n");

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "structs.h"
 #include "errors.h"
+#include "sparse_alloc_free.h"
 
 #define USELESS 1001
 
@@ -19,7 +20,8 @@ void shift_to_end(int *vector, unsigned int len, unsigned int pos);
 
 void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *amount_useless, unsigned int *amount_useful);
 
-size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len);
+void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len);
 
+size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len);
 
 #endif // __SPARSE_MATRIX_H__
