@@ -27,10 +27,10 @@ size_t sparse_mult(sparse_matrix sparse_matr, sparse_matrix sparse_row, sparse_m
         row_res->vector_ja[i] = i;
         row_res->list_ia[i] = 0;
         non_zero_nums++;
-        row_res->cols++;
     }
     row_res->list_ia[row_res->non_zero_nums] = non_zero_nums;
     row_res->rows = sparse_row.rows;
+    row_res->cols = sparse_row.cols;
     row_res->vector_a = realloc(row_res->vector_a, non_zero_nums * sizeof(int));
     row_res->vector_ja = realloc(row_res->vector_ja, non_zero_nums * sizeof(int));
 

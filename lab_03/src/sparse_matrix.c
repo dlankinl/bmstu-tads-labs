@@ -26,20 +26,21 @@ void list_handler(sparse_matrix *matr)
 
 void shift_to_end(int *vector, unsigned int len, unsigned int pos)
 {
+    int tmp;
     for (unsigned int i = pos; i < len - 1; i++)
     {
-        int tmp = vector[i];
+        tmp = vector[i];
         vector[i] = vector[i + 1];
         vector[i + 1] = tmp;
     }
 }
 
-void print_vector(int *vector, unsigned int len)
-{
-    for (unsigned int i = 0; i < len; i++)
-        printf("%d ", vector[i]);
-    printf("\n");
-}
+// void print_vector(int *vector, unsigned int len)
+// {
+//     for (unsigned int i = 0; i < len; i++)
+//         printf("%d ", vector[i]);
+//     printf("\n");
+// }
 
 void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *amount_useless, unsigned int *amount_useful)
 {
@@ -62,13 +63,6 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
     {
         for (unsigned int j = 0; j < matr.cols; j++)
         {
-            // printf("\n%u - counter\n", counter);
-            // if (counter >= matr.non_zero_nums)
-            // {
-            //     printf("%d ", 0);
-            //     break;
-            // }
-            // printf("\n%d - vector_ja, %u - counter\n", matr.vector_ja[counter], counter);
             if (matr.vector_ja[counter] == (int)j)
             {
                 printf("%d ", matr.vector_a[counter]);
@@ -80,6 +74,16 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
         }
         printf("\n");
     }
+}
+
+size_t sparse_res_row_handler(sparse_matrix *matr)
+{
+    unsigned int useless = 0, useful = 0;
+    list_handler(matr);
+
+    vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &useless, &useful);
+    print_sparse_matrix_as_std_matrix(*matr, useful);
+    return EXIT_SUCCESS;
 }
 
 size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
@@ -110,7 +114,6 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
     matr->list_ia[*list_len] = matr->non_zero_nums;
     matr->list_ia = realloc(matr->list_ia, (*list_len + 1) * sizeof(int));
 
-    // printf("\n%d - rows, %d - cols, %d - list_len\n", matr->rows, matr->cols, *list_len);
     print_sparse_matrix_as_std_matrix(*matr, *list_len);
 
     return EXIT_SUCCESS;
