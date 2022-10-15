@@ -36,3 +36,13 @@ size_t sparse_mult(sparse_matrix sparse_matr, sparse_matrix sparse_row, sparse_m
 
     return EXIT_SUCCESS;
 }
+
+size_t std_matrix_mult(std_matrix matr, std_matrix row, std_matrix *res_row)
+{
+    res_row->matrix = alloc_matrix(row.rows, row.cols);
+    res_row->rows = 1;
+    res_row->cols = matr.cols;
+    for (unsigned int i = 0; i < row.cols; i++)
+        for (unsigned int j = 0; j < row.cols; j++)
+            res_row->matrix[0][j] += row.matrix[0][i] * matr.matrix[i][j];
+}

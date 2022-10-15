@@ -40,9 +40,9 @@ size_t std_matrix_fill(int **matrix, unsigned int rows, unsigned int cols, size_
             {
                 sign = rand() % 2;
                 if (sign)
-                    matrix[i][j] = -1 * rand();
+                    matrix[i][j] = -1 * rand()%100;
                 else
-                    matrix[i][j] = rand();
+                    matrix[i][j] = rand()%100;
             }
     }
     else if (type == 1)
@@ -52,6 +52,48 @@ size_t std_matrix_fill(int **matrix, unsigned int rows, unsigned int cols, size_
                 if (scanf("%d", &matrix[i][j]) != 1)
                     return INCORRECT_INPUT;
     }
+    return EXIT_SUCCESS;
+}
+
+int random_fill_std_matrix(std_matrix *matrix, const int fill_percentage)
+{
+    srand(time(NULL));
+    int num_filled;
+
+    num_filled = matrix->rows * matrix->cols * fill_percentage / 100; 
+
+    if (num_filled == 0)
+        return EXIT_FAILURE;
+
+    int k = num_filled;
+
+    for (unsigned int i = 0; i < matrix->rows; i++)
+        for (unsigned int j = 0; j < matrix->cols; j++)
+        {
+            if (k-- > 0)
+                while(!(matrix->matrix[i][j] = rand()%100));
+            else
+                matrix->matrix[i][j] = 0;
+        }
+
+    int f, l, num;
+
+    for (unsigned int i = 0; i < matrix->rows; i++)
+        for (unsigned int j = 0; j < matrix->cols; j++)
+        {
+            if (num_filled-- > 0)
+            {
+                f = 1 + rand() % matrix->rows;
+                l = 1 + rand() % matrix->cols;
+                
+                num = matrix->matrix[f - 1][l - 1];
+                matrix->matrix[f - 1][l - 1] = matrix->matrix[i][j];
+                matrix->matrix[i][j] = num;
+            }
+            else
+                return EXIT_SUCCESS;
+    }
+
     return EXIT_SUCCESS;
 }
 
@@ -90,7 +132,12 @@ size_t std_matrix_handler(std_matrix *matr)
         printf("Введите корректные данные!\n");
         return INCORRECT_INPUT;
     }
-    rc = std_matrix_fill(matr->matrix, matr->rows, matr->cols, filling_type);
+    // rc = std_matrix_fill(matr->matrix, matr->rows, matr->cols, filling_type);
+    printf("Введите процент разреженности матрицы: ");
+    unsigned int percentage = 0;
+    if (scanf("%u", &percentage) != 1 || percentage > 100)
+        return INCORRECT_INPUT;
+    rc = random_fill_std_matrix(matr, percentage);
     if (rc)
     {
         printf("Введите корректные данные!\n");

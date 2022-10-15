@@ -35,12 +35,12 @@ void shift_to_end(int *vector, unsigned int len, unsigned int pos)
     }
 }
 
-// void print_vector(int *vector, unsigned int len)
-// {
-//     for (unsigned int i = 0; i < len; i++)
-//         printf("%d ", vector[i]);
-//     printf("\n");
-// }
+void print_vector(int *vector, unsigned int len)
+{
+    for (unsigned int i = 0; i < len; i++)
+        printf("%d ", vector[i]);
+    printf("\n");
+}
 
 void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *amount_useless, unsigned int *amount_useful)
 {
@@ -76,6 +76,135 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len)
     }
 }
 
+void sort_matrix(sparse_matrix *matr)
+{
+    for (unsigned int i = 0; i < matr->non_zero_nums - 1; i++)
+        for (unsigned int j = i + 1; j < matr->non_zero_nums; j++)
+            if (matr->list_ia[i] > matr->list_ia[j])
+            {
+                int tmp = matr->list_ia[i];
+                matr->list_ia[i] = matr->list_ia[j];
+                matr->list_ia[j] = tmp;
+
+                tmp = matr->vector_a[i];
+                matr->vector_a[i] = matr->vector_a[j];
+                matr->vector_a[j] = tmp;
+
+                tmp = matr->vector_ja[i];
+                matr->vector_ja[i] = matr->vector_ja[j];
+                matr->vector_ja[j] = tmp;
+            }
+}
+
+size_t sparse_rndm_fill(sparse_matrix *matr)
+{
+    int percentage = 0;
+    printf("Введите процент разреженности матрицы: ");
+    if (scanf("%d", &percentage) != 1 || percentage > 100 || percentage < 0)
+    {
+        printf("Введите корректные данные!\n");
+        return INCORRECT_INPUT;
+    }
+    double dbl_prcntg = (float)percentage / 100;
+
+    matr->non_zero_nums = (int)(matr->cols * matr->rows * dbl_prcntg);
+    sparse_matrix_alloc(matr);
+
+
+    //
+    srand(time(NULL));
+
+    for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+        while(!(matr->vector_a[i] = rand() % 100));
+
+    for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+    {
+        matr->list_ia[i] = i / matr->cols;
+        matr->vector_ja[i] = i % matr->cols;
+    }
+
+    int new_i, new_j;
+
+    for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+    {
+        new_i = rand() % matr->rows;
+        new_j = rand() % matr->cols;
+
+        for (unsigned int j = 0; j < matr->non_zero_nums; j++)
+        {
+            if (matr->list_ia[j] == new_i && matr->vector_ja[j] == new_j)
+                break;
+
+            if (j == matr->non_zero_nums - 1)
+            {
+                matr->list_ia[i] = new_i;
+                matr->vector_ja[i] = new_j;
+            }
+        }
+    }
+
+    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+    //     printf("%d - vector_a[%u], %d - vector_ja[%u], %d - list_ia[%u]\n", matr->vector_a[i], i, matr->vector_ja[i], i, matr->list_ia[i], i);
+    // printf("\n");
+    sort_matrix(matr);
+    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+    //     printf("%d - vector_a[%u], %d - vector_ja[%u], %d - list_ia[%u]\n", matr->vector_a[i], i, matr->vector_ja[i], i, matr->list_ia[i], i);
+    // printf("\n");
+
+    //
+
+
+
+    // printf("%d - non_zero\n", matr->non_zero_nums);
+    // sparse_matrix_alloc(matr);
+    // size_t counter = 0, counter2 = 0, counter3 = 0;
+
+    // srand(time(NULL));
+    // if (matr->non_zero_nums == matr->cols * matr->rows)
+    // {
+    //     for (unsigned int i = 0; i < matr->rows; i++)
+    //         for (unsigned int j = 0; j < matr->cols; j++)
+    //         {
+    //             matr->vector_a[i * matr->rows + j] = rand()%1000;
+    //             if (rand()%2)
+    //                 matr->vector_a[i * matr->rows + j] *= -1;
+    //             matr->vector_ja[i * matr->rows + j] = j;
+    //             matr->list_ia[i * matr->rows + j] = i;
+    //         }
+    // }
+    // else
+    // {
+    //     for (unsigned int i = 0; i < matr->cols * matr->rows; i++)
+    //     {
+    //         if (rand()%2 && counter3 < matr->non_zero_nums - 1)
+    //         {
+    //             matr->vector_ja[counter3] = counter2 % matr->cols;
+    //             counter3++;
+    //         }
+    //         counter2++;
+    //     }
+    //     for (unsigned int i = 0; i < matr->non_zero_nums; i++)
+    //     {
+    //         size_t sign = rand() % 2;
+    //         if (sign)
+    //             matr->vector_a[i] = -1 * rand()%1000;
+    //         else
+    //             matr->vector_a[i] = rand()%1000;
+
+    //         if (!(rand()%3))
+    //         {
+    //             matr->list_ia[i] = counter;
+    //             if (counter < matr->rows - 1)
+    //                 counter++;
+    //         }
+    //         else
+    //         {
+    //             matr->list_ia[i] = counter;
+    //         }
+    //     }
+    // }
+}
+
 size_t sparse_res_row_handler(sparse_matrix *matr)
 {
     unsigned int useless = 0, useful = 0;
@@ -86,7 +215,7 @@ size_t sparse_res_row_handler(sparse_matrix *matr)
     return EXIT_SUCCESS;
 }
 
-size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
+size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t input_method)
 {
     printf("Введите размер матрицы (максимум 1000х1000): ");
     if (scanf("%u %u", &matr->rows, &matr->cols) != 2 || matr->rows > 1000 || matr->cols > 1000)
@@ -95,20 +224,27 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len)
         return INCORRECT_INPUT;
     }
 
-    printf("Введите количество ненулевых элементов (от 1 до %d): ", matr->rows * matr->cols);
-    if (scanf("%u", &matr->non_zero_nums) != 1 || matr->non_zero_nums <= 0 || matr->non_zero_nums > matr->rows * matr->cols)
+    if (input_method == 1)
     {
-        printf("Неверный ввод!\n");
-        return INCORRECT_INPUT;
+        printf("Введите количество ненулевых элементов (от 1 до %d): ", matr->rows * matr->cols);
+        if (scanf("%u", &matr->non_zero_nums) != 1 || matr->non_zero_nums <= 0 || matr->non_zero_nums > matr->rows * matr->cols)
+        {
+            printf("Неверный ввод!\n");
+            return INCORRECT_INPUT;
+        }
+
+        sparse_matrix_alloc(matr);
+
+        printf("\nВведите элементы разреженной матрицы построчно в следующем формате:\n\n"
+               "elem row_numb column_numb\n\n");
+        sparse_matrix_fill(matr);
+    }
+    else if (input_method == 2)
+    {
+        sparse_rndm_fill(matr);
     }
 
-    sparse_matrix_alloc(matr);
-
-    printf("\nВведите элементы разреженной матрицы построчно в следующем формате:\n\n"
-           "elem row_numb column_numb\n\n");
-    sparse_matrix_fill(matr);
     list_handler(matr);
-
     unsigned int amount = 0;
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &amount, list_len);
     matr->list_ia[*list_len] = matr->non_zero_nums;

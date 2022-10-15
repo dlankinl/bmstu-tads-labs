@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
+#include <time.h>
 #include "structs.h"
 #include "errors.h"
 #include "sparse_alloc_free.h"
@@ -22,6 +24,6 @@ void print_sparse_matrix_as_std_matrix(sparse_matrix matr, unsigned int ia_len);
 
 size_t sparse_res_row_handler(sparse_matrix *matr);
 
-size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len);
+size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t input_method);
 
 #endif // __SPARSE_MATRIX_H__
