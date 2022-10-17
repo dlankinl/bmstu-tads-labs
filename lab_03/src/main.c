@@ -4,6 +4,7 @@
 #include "../inc/sparse_matrix.h"
 #include "../inc/matrix_mult.h"
 #include "../inc/errors.h"
+#include "../inc/time_mem_test.h"
 
 void print_prompt(void)
 {
@@ -75,9 +76,9 @@ int main(void)
             printf("Результат умножения вектора-строки на матрицу:\n");
             sparse_res_row_handler(&res_row);
 
-            sparse_matrix_free(&sparse_matr);
-            sparse_matrix_free(&sparse_row);
-            sparse_matrix_free(&res_row);
+            // sparse_matrix_free(&sparse_matr);
+            // sparse_matrix_free(&sparse_row);
+            // sparse_matrix_free(&res_row);
         }
         else if (cmd == 2)
         {
@@ -98,11 +99,13 @@ int main(void)
             free_matrix(matrix.matrix);
             free_matrix(row.matrix);
             free_matrix(res_row.matrix);
+            matr_len = 0;
+            row_len = 0;
         }
-        // else if (cmd == 3)
-        // {
-        //     printf()
-        // }
+        else if (cmd == 3)
+        {
+            time_mem_test();
+        }
         else if (cmd == 0)
         {
             printf("Завершение работы...\n");

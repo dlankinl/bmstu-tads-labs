@@ -96,22 +96,14 @@ void sort_matrix(sparse_matrix *matr)
             }
 }
 
-size_t sparse_rndm_fill(sparse_matrix *matr)
+size_t sparse_rndm_fill(sparse_matrix *matr, int percentage)
 {
-    int percentage = 0;
-    printf("Введите процент разреженности матрицы: ");
-    if (scanf("%d", &percentage) != 1 || percentage > 100 || percentage < 0)
-    {
-        printf("Введите корректные данные!\n");
-        return INCORRECT_INPUT;
-    }
+    
     double dbl_prcntg = (float)percentage / 100;
 
     matr->non_zero_nums = (int)(matr->cols * matr->rows * dbl_prcntg);
     sparse_matrix_alloc(matr);
 
-
-    //
     srand(time(NULL));
 
     for (unsigned int i = 0; i < matr->non_zero_nums; i++)
@@ -119,6 +111,8 @@ size_t sparse_rndm_fill(sparse_matrix *matr)
 
     for (unsigned int i = 0; i < matr->non_zero_nums; i++)
     {
+        if (rand() % 2)
+            matr->vector_a[i] *= -1;
         matr->list_ia[i] = i / matr->cols;
         matr->vector_ja[i] = i % matr->cols;
     }
@@ -150,59 +144,6 @@ size_t sparse_rndm_fill(sparse_matrix *matr)
     // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
     //     printf("%d - vector_a[%u], %d - vector_ja[%u], %d - list_ia[%u]\n", matr->vector_a[i], i, matr->vector_ja[i], i, matr->list_ia[i], i);
     // printf("\n");
-
-    //
-
-
-
-    // printf("%d - non_zero\n", matr->non_zero_nums);
-    // sparse_matrix_alloc(matr);
-    // size_t counter = 0, counter2 = 0, counter3 = 0;
-
-    // srand(time(NULL));
-    // if (matr->non_zero_nums == matr->cols * matr->rows)
-    // {
-    //     for (unsigned int i = 0; i < matr->rows; i++)
-    //         for (unsigned int j = 0; j < matr->cols; j++)
-    //         {
-    //             matr->vector_a[i * matr->rows + j] = rand()%1000;
-    //             if (rand()%2)
-    //                 matr->vector_a[i * matr->rows + j] *= -1;
-    //             matr->vector_ja[i * matr->rows + j] = j;
-    //             matr->list_ia[i * matr->rows + j] = i;
-    //         }
-    // }
-    // else
-    // {
-    //     for (unsigned int i = 0; i < matr->cols * matr->rows; i++)
-    //     {
-    //         if (rand()%2 && counter3 < matr->non_zero_nums - 1)
-    //         {
-    //             matr->vector_ja[counter3] = counter2 % matr->cols;
-    //             counter3++;
-    //         }
-    //         counter2++;
-    //     }
-    //     for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-    //     {
-    //         size_t sign = rand() % 2;
-    //         if (sign)
-    //             matr->vector_a[i] = -1 * rand()%1000;
-    //         else
-    //             matr->vector_a[i] = rand()%1000;
-
-    //         if (!(rand()%3))
-    //         {
-    //             matr->list_ia[i] = counter;
-    //             if (counter < matr->rows - 1)
-    //                 counter++;
-    //         }
-    //         else
-    //         {
-    //             matr->list_ia[i] = counter;
-    //         }
-    //     }
-    // }
 }
 
 size_t sparse_res_row_handler(sparse_matrix *matr)
@@ -211,7 +152,7 @@ size_t sparse_res_row_handler(sparse_matrix *matr)
     list_handler(matr);
 
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &useless, &useful);
-    print_sparse_matrix_as_std_matrix(*matr, useful);
+    // print_sparse_matrix_as_std_matrix(*matr, useful);
     return EXIT_SUCCESS;
 }
 
@@ -241,7 +182,14 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t
     }
     else if (input_method == 2)
     {
-        sparse_rndm_fill(matr);
+        int percentage = 0;
+        printf("Введите процент разреженности матрицы: ");
+        if (scanf("%d", &percentage) != 1 || percentage > 100 || percentage < 0)
+        {
+            printf("Введите корректные данные!\n");
+            return INCORRECT_INPUT;
+        }
+        sparse_rndm_fill(matr, percentage);
     }
 
     list_handler(matr);
