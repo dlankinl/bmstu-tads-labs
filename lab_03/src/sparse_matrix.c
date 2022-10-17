@@ -102,6 +102,8 @@ size_t sparse_rndm_fill(sparse_matrix *matr, int percentage)
     double dbl_prcntg = (float)percentage / 100;
 
     matr->non_zero_nums = (int)(matr->cols * matr->rows * dbl_prcntg);
+    if (matr->non_zero_nums < 1)
+        return INCORRECT_INPUT;
     sparse_matrix_alloc(matr);
 
     srand(time(NULL));
@@ -137,13 +139,7 @@ size_t sparse_rndm_fill(sparse_matrix *matr, int percentage)
         }
     }
 
-    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-    //     printf("%d - vector_a[%u], %d - vector_ja[%u], %d - list_ia[%u]\n", matr->vector_a[i], i, matr->vector_ja[i], i, matr->list_ia[i], i);
-    // printf("\n");
     sort_matrix(matr);
-    // for (unsigned int i = 0; i < matr->non_zero_nums; i++)
-    //     printf("%d - vector_a[%u], %d - vector_ja[%u], %d - list_ia[%u]\n", matr->vector_a[i], i, matr->vector_ja[i], i, matr->list_ia[i], i);
-    // printf("\n");
 }
 
 size_t sparse_res_row_handler(sparse_matrix *matr)
@@ -152,7 +148,7 @@ size_t sparse_res_row_handler(sparse_matrix *matr)
     list_handler(matr);
 
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &useless, &useful);
-    // print_sparse_matrix_as_std_matrix(*matr, useful);
+    print_sparse_matrix_as_std_matrix(*matr, useful);
     return EXIT_SUCCESS;
 }
 
@@ -198,7 +194,8 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t
     matr->list_ia[*list_len] = matr->non_zero_nums;
     matr->list_ia = realloc(matr->list_ia, (*list_len + 1) * sizeof(int));
 
-    print_sparse_matrix_as_std_matrix(*matr, *list_len);
+    // printf("\nMatrix\n");
+    // print_sparse_matrix_as_std_matrix(*matr, *list_len);
 
     return EXIT_SUCCESS;
 }

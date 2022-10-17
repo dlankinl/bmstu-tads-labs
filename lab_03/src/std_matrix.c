@@ -14,13 +14,6 @@ int **alloc_matrix(unsigned int rows, unsigned int cols)
     }
     for (size_t i = 0; i < rows; i++)
         ptrs[i] = data + i * cols;
-    // for (unsigned int i = 0; i < rows; i++)
-    // {
-    //     for (unsigned int j = 0; j < cols; j++)
-    //         printf("%d ", ptrs[i][j]);
-    //     printf("\n");
-    // }
-    // printf("\n");
     return ptrs;
 }
 
