@@ -14,7 +14,7 @@ void free_matrix(int **ptrs);
 
 size_t std_matrix_fill(int **matrix, unsigned int rows, unsigned int cols, size_t type);
 
-int random_fill_std_matrix(std_matrix *matrix, const int fill_percentage);
+size_t random_fill_std_matrix(std_matrix *matrix, const int percentage);
 
 size_t read_rows_cols(unsigned int *rows, unsigned int *cols);
 

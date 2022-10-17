@@ -48,17 +48,15 @@ size_t std_matrix_fill(int **matrix, unsigned int rows, unsigned int cols, size_
     return EXIT_SUCCESS;
 }
 
-int random_fill_std_matrix(std_matrix *matrix, const int fill_percentage)
+size_t random_fill_std_matrix(std_matrix *matrix, const int percentage)
 {
     srand(time(NULL));
-    int num_filled;
+    int num_to_fill = matrix->rows * matrix->cols * percentage / 100; 
 
-    num_filled = matrix->rows * matrix->cols * fill_percentage / 100; 
-
-    if (num_filled == 0)
+    if (num_to_fill == 0)
         return EXIT_FAILURE;
 
-    int k = num_filled;
+    int k = num_to_fill;
 
     for (unsigned int i = 0; i < matrix->rows; i++)
         for (unsigned int j = 0; j < matrix->cols; j++)
@@ -74,7 +72,7 @@ int random_fill_std_matrix(std_matrix *matrix, const int fill_percentage)
     for (unsigned int i = 0; i < matrix->rows; i++)
         for (unsigned int j = 0; j < matrix->cols; j++)
         {
-            if (num_filled-- > 0)
+            if (num_to_fill-- > 0)
             {
                 f = 1 + rand() % matrix->rows;
                 l = 1 + rand() % matrix->cols;
