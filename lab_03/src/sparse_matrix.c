@@ -35,13 +35,6 @@ void shift_to_end(int *vector, unsigned int len, unsigned int pos)
     }
 }
 
-void print_vector(int *vector, unsigned int len)
-{
-    for (unsigned int i = 0; i < len; i++)
-        printf("%d ", vector[i]);
-    printf("\n");
-}
-
 void vector_delete_useless_elems(int *vector, unsigned int len, unsigned int *amount_useless, unsigned int *amount_useful)
 {
     for (int i = len - 1; i >= 0; i--)
@@ -140,6 +133,21 @@ size_t sparse_rndm_fill(sparse_matrix *matr, int percentage)
     }
 
     sort_matrix(matr);
+    return EXIT_SUCCESS;
+}
+
+void print_sparse_matrix(sparse_matrix matr, unsigned int ia_len)
+{
+    printf("Vector A:\n");
+    for (unsigned int i = 0; i < matr.non_zero_nums; i++)
+        printf("%d ", matr.vector_a[i]);
+    printf("\nVector JA:\n");
+    for (unsigned int i = 0; i < matr.non_zero_nums; i++)
+        printf("%d ", matr.vector_ja[i]);
+    printf("\nList IA:\n");
+    for (unsigned int i = 0; i < ia_len; i++)
+        printf("%d ", matr.list_ia[i]);
+    printf("\n");
 }
 
 size_t sparse_res_row_handler(sparse_matrix *matr)
@@ -148,7 +156,7 @@ size_t sparse_res_row_handler(sparse_matrix *matr)
     list_handler(matr);
 
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &useless, &useful);
-    print_sparse_matrix_as_std_matrix(*matr, useful);
+    print_sparse_matrix(*matr, useful);
     return EXIT_SUCCESS;
 }
 
@@ -193,9 +201,6 @@ size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t
     vector_delete_useless_elems(matr->list_ia, matr->non_zero_nums, &amount, list_len);
     matr->list_ia[*list_len] = matr->non_zero_nums;
     matr->list_ia = realloc(matr->list_ia, (*list_len + 1) * sizeof(int));
-
-    // printf("\nMatrix\n");
-    // print_sparse_matrix_as_std_matrix(*matr, *list_len);
 
     return EXIT_SUCCESS;
 }

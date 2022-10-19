@@ -26,6 +26,8 @@ size_t sparse_res_row_handler(sparse_matrix *matr);
 
 size_t sparse_rndm_fill(sparse_matrix *matr, int percentage);
 
+void print_sparse_matrix(sparse_matrix matr, unsigned int ia_len);
+
 size_t sparse_matrix_handler(sparse_matrix *matr, unsigned int *list_len, size_t input_method);
 
 #endif // __SPARSE_MATRIX_H__

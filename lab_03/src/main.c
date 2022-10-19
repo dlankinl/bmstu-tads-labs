@@ -75,17 +75,7 @@ int main(void)
             sparse_mult(sparse_matr, sparse_row, &res_row, sparse_row.cols);
             printf("\n");
             printf("Результат умножения вектора-строки на матрицу:\n");
-            // sparse_res_row_handler(&res_row);
-            print_sparse_matrix_as_std_matrix(res_row, res_row.rows);
-
-            printf("\nMATRIX\n");
-            print_sparse_matrix_as_std_matrix(sparse_matr, matr_len);
-            printf("\nROW\n");
-            print_sparse_matrix_as_std_matrix(sparse_row, row_len);
-
-            // sparse_matrix_free(&sparse_matr);
-            // sparse_matrix_free(&sparse_row);
-            // sparse_matrix_free(&res_row);
+            sparse_res_row_handler(&res_row);
         }
         else if (cmd == 2)
         {

@@ -12,6 +12,6 @@ void create_sparse_matrixes(sparse_matrix *matr, sparse_matrix *row, int percent
 
 void create_std_matrixes(std_matrix *matr, std_matrix *row, int percentage, unsigned int rows_matr, unsigned int cols);
 
-size_t time_mem_test(void);
+void time_mem_test(void);
 
 #endif // __TIME_MEM_TEST_H__

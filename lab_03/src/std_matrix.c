@@ -123,17 +123,18 @@ size_t std_matrix_handler(std_matrix *matr)
         printf("Введите корректные данные!\n");
         return INCORRECT_INPUT;
     }
-    // rc = std_matrix_fill(matr->matrix, matr->rows, matr->cols, filling_type);
-    printf("Введите процент разреженности матрицы: ");
-    unsigned int percentage = 0;
-    if (scanf("%u", &percentage) != 1 || percentage > 100)
-        return INCORRECT_INPUT;
-    rc = random_fill_std_matrix(matr, percentage);
-    if (rc)
+    printf("Type = %zu\n", filling_type);
+    if (filling_type == 1)
+        printf("Введите количество ненулевых элементов (от 1 до %d):", matr->rows * matr->cols);
+    else if (filling_type == 2)
     {
-        printf("Введите корректные данные!\n");
-        return rc;
+        printf("Введите процент разреженности матрицы: ");
+        unsigned int percentage = 0;
+        if (scanf("%u", &percentage) != 1 || percentage > 100)
+            return INCORRECT_INPUT;
     }
+
+    std_matrix_fill(matr->matrix, matr->rows, matr->cols, filling_type);
     return EXIT_SUCCESS;
 }
 
