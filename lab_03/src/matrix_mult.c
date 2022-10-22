@@ -23,20 +23,6 @@ size_t sparse_mult(sparse_matrix sparse_matr, sparse_matrix sparse_row, sparse_m
             temp[sparse_matr.vector_ja[k]] += sparse_row.vector_a[i] * sparse_matr.vector_a[k];
     }
 
-    if (sparse_matr.rows == 1000 && sparse_matr.cols == 1000 && sparse_matr.vector_a[0] == 100 && sparse_matr.vector_a[1] == 200)
-    {
-        row_res->vector_a[0] = 200;
-        row_res->vector_a[1] = 800;
-        row_res->vector_a[2] = -1800;
-        row_res->vector_ja[0] = 0;
-        row_res->vector_ja[1] = 200;
-        row_res->vector_ja[2] = 500;
-        row_res->list_ia[0] = 0;
-        row_res->list_ia[1] = 1;
-        row_res->list_ia[2] = 2;
-        row_res->non_zero_nums = 3;
-        return EXIT_SUCCESS;
-    }
     for (size_t i = 0; i < cols; i++)
     {
         if (temp[i] != 0)
