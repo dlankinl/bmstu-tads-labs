@@ -34,13 +34,13 @@ void tree_t_print(node_t *root, const char *dir, int level);
 
 size_t tree_t_read_from_file(FILE *f, node_t **head, uint64_t *avg_ins_time, size_t is_balanced);
 
-// void print_tree(node_t *tree, int place);
-
 void print_tree(node_t *head, int level);
 
 void print_tree_chosen(node_t *head, int level, char letter, size_t to_print, int *counter);
 
 void tree_t_remove_by_ptr(node_t *to_del);
+
+node_t *tree_t_find_node(node_t *head, char *word, size_t *counter);
 
 void tree_t_delete_node(node_t *head, char *word);
 
@@ -63,5 +63,9 @@ node_t *right_rotate(node_t *node);
 node_t *node_balance(node_t *node);
 
 node_t *balanced_tree_t_insert(node_t *head, char *word);
+
+node_t *balance_tree(node_t *bts, node_t **tree_avl);
+
+node_t *find_avl(node_t *p, char word[MAX_LEN], size_t *counter);
 
 #endif // __TREE_T_H__

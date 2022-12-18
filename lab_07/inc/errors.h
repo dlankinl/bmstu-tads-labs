@@ -8,5 +8,8 @@
 #define INCORRECT_INPUT 6
 
 #define MAX_LEN 256
+#define COLLISION 3
+#define TRUE 1
+#define FALSE 0
 
 #endif // __ERRORS_H__

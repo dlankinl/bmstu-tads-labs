@@ -69,6 +69,7 @@ size_t tree_t_read_from_file(FILE *f, node_t **head, uint64_t *avg_ins_time, siz
     ssize_t read;
     uint64_t start, end, sum = 0;
     size_t counter = 0;
+    getc(f);
     while ((read = getline(&line, &len, f)) != -1)
     {
         line[strlen(line) - 1] = 0;
@@ -79,12 +80,6 @@ size_t tree_t_read_from_file(FILE *f, node_t **head, uint64_t *avg_ins_time, siz
             {
                 start = tick();
                 tree_t_insert(head, ptmp);
-                end = tick();
-            }
-            else
-            {
-                start = tick();
-                (*head) = balanced_tree_t_insert(*head, ptmp);
                 end = tick();
             }
             sum += end - start;
@@ -124,17 +119,19 @@ void print_tree_chosen(node_t *head, int level, char letter, size_t to_print, in
     }
 }
 
-node_t *tree_t_find_node(node_t *head, char *word)
+node_t *tree_t_find_node(node_t *head, char *word, size_t *counter)
 {
     while (head)
     {
         if (strcmp(word, head->word) > 0)
         {
+            (*counter)++;
             head = head->right;
             continue;
         }
         else if (strcmp(word, head->word) < 0)
         {
+            (*counter)++;
             head = head->left;
             continue;
         }
@@ -175,7 +172,8 @@ void tree_t_remove_by_ptr(node_t *to_del)
 
 void tree_t_delete_node(node_t *head, char *word)
 {
-    node_t *cur = tree_t_find_node(head, word);
+    size_t counter = 0;
+    node_t *cur = tree_t_find_node(head, word, &counter);
     tree_t_remove_by_ptr(cur);
 }
 
@@ -248,66 +246,108 @@ void post_order(node_t *node)
     printf("%s\n", node->word);
 }
 
-int balance_factor(node_t *node)
+unsigned int height(node_t *p)
 {
-    return node->right->height - node->left->height;
+	return p ? p->height : 0;
 }
 
-void recover_height(node_t *node)
+int balance_factor(node_t *p)
 {
-    int hl = node->left->height, hr = node->right->height;
-    node->height = (hl > hr ? hl : hr) + 1;
+	return height(p->right) - height(p->left);
 }
 
-node_t *left_rotate(node_t *node)
+void fix_height(node_t *p)
 {
-    node_t *tmp = node->right;
-    node->right = tmp->left;
-    tmp->left = node;
-    recover_height(node);
-    recover_height(tmp);
-    return tmp;
+	unsigned int hl = height(p->left);
+	unsigned int hr = height(p->right);
+	p->height = (hl > hr ? hl : hr) + 1;
 }
 
-node_t *right_rotate(node_t *node)
+node_t *rotate_right(node_t *p)
 {
-    node_t *tmp = node->left;
-    node->left = tmp->right;
-    tmp->right = node;
-    recover_height(node);
-    recover_height(tmp);
-    return tmp;
+	node_t *q = p->left;
+	p->left = q->right;
+	q->right = p;
+	fix_height(p);
+	fix_height(q);
+	return q;
 }
 
-node_t *node_balance(node_t *node)
+node_t *rotate_left(node_t *q)
 {
-    recover_height(node);
-    printf("%zu - height for %s\n", node->height, node->word);
-    if (balance_factor(node) == 2)
-    {
-        if (balance_factor(node->right) < 0)
-            node->right = right_rotate(node->right);
-        return left_rotate(node);
-    }
-    else if (balance_factor(node) == -2)
-    {
-        if (balance_factor(node->left) > 0)
-            node->left = left_rotate(node->left);
-        return right_rotate(node);
-    }
-    return node;
+	node_t *p = q->right;
+	q->right = p->left;
+	p->left = q;
+	fix_height(q);
+	fix_height(p);
+	return p;
 }
 
-node_t *balanced_tree_t_insert(node_t *head, char *word)
+node_t *balance(node_t *p)
 {
-    if (!head)
-    {
-        head = init_node(1, word);
-        return head;
-    }
-    if (strcmp(head->word, word) > 0)
-        head->left = balanced_tree_t_insert(head->left, word);
-    else
-        head->right = balanced_tree_t_insert(head->right, word);
-    return node_balance(head);
+	fix_height(p);
+
+	if (balance_factor(p) == 2)
+	{
+		if (balance_factor(p->right) < 0)
+			p->right = rotate_right(p->right);
+		return rotate_left(p);
+	}
+
+	else if (balance_factor(p) == -2)
+	{
+		if (balance_factor(p->left) > 0)
+			p->left = rotate_left(p->left);
+		return rotate_right(p);
+	}
+	return p;
+}
+
+node_t *insert(node_t *p, char word[MAX_LEN])
+{
+	if (!p)
+        return init_node(0, word);
+		// return create_node(word);
+
+	if (strcmp(p->word, word) > 0)
+		p->left = insert(p->left, word);
+
+	else if (strcmp(p->word, word) < 0)
+		p->right = insert(p->right, word);
+
+	return balance(p);
+}
+
+node_t *balance_tree(node_t *bts, node_t **tree_avl)
+{
+	if (bts)
+	{
+		*tree_avl = insert(*tree_avl, bts->word);
+		balance_tree(bts->left, tree_avl);
+		balance_tree(bts->right, tree_avl);
+	}
+
+	return *tree_avl;
+}
+
+node_t *find_avl(node_t *p, char word[MAX_LEN], size_t *counter)
+{
+	node_t *target;
+	if (!p)
+		return NULL;
+
+	if (strcmp(word, p->word) < 0)
+	{
+        (*counter)++;
+		target = find_avl(p->left, word, counter);
+	}
+	else if (strcmp(word, p->word) > 0)
+	{
+        (*counter)++;
+		target = find_avl(p->right, word, counter);
+	}
+	else
+		return p;
+
+	return target;
 }
