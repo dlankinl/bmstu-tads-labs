@@ -203,7 +203,7 @@ size_t nearest_bigger_prime(size_t num)
     return num;
 }
 
-hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len, size_t mx_dep)
+hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len)
 {
     // size_t cur_mx_dep;
     hash_elem_t **new;
@@ -267,7 +267,7 @@ size_t wrong_hash_elements(hash_elem_step_t **table, size_t len)
     return count;
 }
 
-hash_elem_step_t **hash_table_step_restructure(hash_elem_t **table, size_t *len, size_t wrong_elems)
+hash_elem_step_t **hash_table_step_restructure(hash_elem_t **table, size_t *len)
 {
     // size_t cur_mx_dep;
     hash_elem_step_t **new;

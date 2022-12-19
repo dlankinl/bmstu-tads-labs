@@ -11,14 +11,13 @@ void print_menu(void)
     printf("\nМЕНЮ\n\n"
            "1. Заполнить все типы данных из файла.\n"
            "2. Сбалансировать ДДП.\n"
-           "3. Анализ количества сравнений для поиска в ДДП, АВЛ и хеш-таблице.\n"
-           "4. Анализ времени поиска в ДДП, АВЛ, хеш-таблице.\n"
-           "5. Вывести на экран ДДП.\n"
-           "6. Вывести на экран АВЛ.\n"
-           "7. Вывести на экран хеш-таблицу (метод цепочек).\n"
-           "8. Вывести на экран хеш-таблицу (внутр. хеш-ие).\n"
-           "9. Реструктуризировать хеш-таблицу (метод цепочек).\n"
-           "10. Реструктуризировать хеш-таблицу (внутр. хеш-ие).\n"
+           "3. Анализ количества сравнений для поиска в ДДП, АВЛ и хеш-таблицах.\n"
+           "4. Вывести на экран ДДП.\n"
+           "5. Вывести на экран АВЛ.\n"
+           "6. Вывести на экран хеш-таблицу (метод цепочек).\n"
+           "7. Вывести на экран хеш-таблицу (внутр. хеш-ие).\n"
+           "8. Реструктуризировать хеш-таблицу (метод цепочек).\n"
+           "9. Реструктуризировать хеш-таблицу (внутр. хеш-ие).\n"
            "0. Завершить работу.\n\n");
 }
 
@@ -35,7 +34,7 @@ int main(int argc, char *argv[])
     node_t *root = NULL;
     hash_elem_t **table = NULL;
     hash_elem_step_t **table_step = NULL;
-    size_t collisions = 0;
+    // size_t collisions = 0;
     size_t hash_len = 0, hash_step_len = 0;
     compares_t all = {0};
     times_t times = {0};
@@ -87,6 +86,10 @@ int main(int argc, char *argv[])
         else if (cmd == 3)
         {
             char word[MAX_LEN];
+            all.count_avl_find = 0;
+            all.count_bst_find = 0;
+            all.count_hash_find = 0;
+            all.count_hash_st_find = 0;
             printf("Какое слово вы хотите найти? Введите его: ");
             if (scanf("%s", word) != 1)
             {
@@ -109,45 +112,51 @@ int main(int argc, char *argv[])
             end = tick();
             times.bst_find = (end - start) / 10000;
 
+            size_t cnt1 = 0, cnt2 = 0;
+            pre_order(root, &cnt1);
+            pre_order(avl_tree, &cnt2);
+
             printf("ДДП: %zu сравнений.\nАВЛ: %zu сравнений.\nХэш-таблица: %zu сравнений.\nХеш-таблица (внутр. хеш.): %zu сравнений.\n\n", all.count_bst_find / 10000, all.count_avl_find / 10000, all.count_hash_find + 1, all.count_hash_st_find + 1);
-            printf("ДДП: %ld тиков.\nАВЛ: %ld тиков.\nХеш-таблица: %ld тиков.\nХеш-таблица (внутр. хеш.): %ld тиков.", times.bst_find, times.avl_find, times.hash_find, times.hash_st_find);
+            printf("ДДП: %ld тиков.\nАВЛ: %ld тиков.\nХеш-таблица: %ld тиков.\nХеш-таблица (внутр. хеш.): %ld тиков.\n\n", times.bst_find, times.avl_find, times.hash_find, times.hash_st_find);
+            printf("ДДП: %zu байтов.\nАВЛ: %zu байтов.\nХеш-таблица (метод цепочек): %zu байтов.\nХеш-таблица (внутр. хеш-ие): %zu байтов.\n",
+            sizeof(tree_t) * cnt1, sizeof(avl_tree) * cnt2, sizeof(hash_elem_t) * hash_len, sizeof(hash_elem_step_t) * hash_step_len);
         }
-        else if (cmd == 5)
+        else if (cmd == 4)
         {
             int counter = 0;
             export_to_png("res.png", "res", "Tree", root, ' ', &counter);
         }
-        else if (cmd == 6)
+        else if (cmd == 5)
         {
             int counter = 0;
             export_to_png("res.png", "res", "Tree", avl_tree, ' ', &counter);
         }
-        else if (cmd == 7)
+        else if (cmd == 6)
             hash_table_print(table, hash_len);
-        else if (cmd == 8)
+        else if (cmd == 7)
             hash_table_step_print(table_step, hash_step_len * 2);        
-        else if (cmd == 9)
+        else if (cmd == 8)
         {
             size_t mx_dep = max_depth(table, hash_len), cur_mx;
-            table = hash_table_restructure(table, &hash_len, mx_dep);
+            table = hash_table_restructure(table, &hash_len);
             cur_mx = max_depth(table, hash_len);
             while (cur_mx >= mx_dep && hash_len < 300000)
             {
-                table = hash_table_restructure(table, &hash_len, cur_mx);
+                table = hash_table_restructure(table, &hash_len);
                 cur_mx = max_depth(table, hash_len);
                 if (hash_len % 10000 < 10)
                     printf("Пожалуйста, подождите. Идет поиск числа (текущее - %zu).\n", hash_len);
             }
         }
-        else if (cmd == 10)
+        else if (cmd == 9)
         {
             size_t wrong_elems = wrong_hash_elements(table_step, hash_step_len * 2), cur_wrong_elems;
-            table_step = hash_table_step_restructure(table_step, &hash_step_len, wrong_elems);
+            table_step = hash_table_step_restructure(table_step, &hash_step_len);
 
             cur_wrong_elems = wrong_hash_elements(table_step, hash_step_len * 2);
             while (cur_wrong_elems >= wrong_elems && hash_len < 300000)
             {
-                table_step = hash_table_step_restructure(table_step, &hash_step_len, cur_wrong_elems);
+                table_step = hash_table_step_restructure(table_step, &hash_step_len);
                 cur_wrong_elems = wrong_hash_elements(table_step, hash_step_len * 2);
             }
             printf("%zu - текущее число коллизий.\n", cur_wrong_elems);

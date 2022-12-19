@@ -10,7 +10,7 @@ void to_dot(node_t *root, void *param, char letter, int *counter)
         if (root->left->word[0] == letter)
         {
             fprintf(f, "%s -> %s [color=green];\n", root->word, root->left->word);
-            *counter++;
+            // *counter++;
         }
         else
             fprintf(f, "%s -> %s;\n", root->word, root->left->word);
@@ -20,7 +20,7 @@ void to_dot(node_t *root, void *param, char letter, int *counter)
         if (root->right->word[0] == letter)
         {
             fprintf(f, "%s -> %s [color=green];\n", root->word, root->right->word);
-            *counter++;
+            // *counter++;
         }
         else
             fprintf(f, "%s -> %s;\n", root->word, root->right->word);
@@ -31,14 +31,9 @@ void apply(node_t *root, void (*f)(node_t*, void*, char, int *), void *arg, char
 {
     if (root == NULL)
         return;
-    // pre-order
     f(root, arg, letter, counter);
     apply(root->left, f, arg, letter, counter);
-    // in-order
-    // f(tree, arg);
     apply(root->right, f, arg, letter, counter);
-    // post-order
-    // f(tree, arg);
 }
 
 void export_to_dot(FILE *dst, const char *tree_name, node_t *root, char letter, int *counter)

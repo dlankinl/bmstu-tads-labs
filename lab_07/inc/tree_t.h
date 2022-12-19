@@ -46,7 +46,7 @@ void tree_t_delete_node(node_t *head, char *word);
 
 void delete(node_t *head, char *word);
 
-void pre_order(node_t *node);
+void pre_order(node_t *node, size_t *counter);
 
 void in_order(node_t *node);
 

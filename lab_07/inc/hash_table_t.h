@@ -53,7 +53,7 @@ size_t max_depth(hash_elem_t **table, size_t len);
 
 size_t nearest_bigger_prime(size_t num);
 
-hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len, size_t mx_dep);
+hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len);
 
 // In hash
 
@@ -71,6 +71,6 @@ void hash_table_step_free(hash_elem_step_t **table, size_t len);
 
 size_t wrong_hash_elements(hash_elem_step_t **table, size_t len);
 
-hash_elem_step_t **hash_table_step_restructure(hash_elem_t **table, size_t *len, size_t wrong_elems);
+hash_elem_step_t **hash_table_step_restructure(hash_elem_t **table, size_t *len);
 
 #endif // __HASH_TABLE_T_H__

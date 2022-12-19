@@ -219,13 +219,14 @@ void delete(node_t *head, char *word)
 }
 
 
-void pre_order(node_t *node)
+void pre_order(node_t *node, size_t *counter)
 {
     if (!node)
         return;
-    printf("%s\n", node->word);
-    pre_order(node->left);
-    pre_order(node->right);
+    // printf("%s\n", node->word);
+    (*counter)++;
+    pre_order(node->left, counter);
+    pre_order(node->right, counter);
 }
 
 void in_order(node_t *node)
