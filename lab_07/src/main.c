@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
     size_t cmd = 0;
     node_t *root = NULL;
     hash_elem_t **table = NULL;
+    hash_elem_step_t **table_step = NULL;
     size_t collisions = 0;
     size_t hash_len = 0;
     compares_t all = {0};
@@ -332,6 +333,16 @@ int main(int argc, char *argv[])
                 if (hash_len % 10000 < 10)
                     printf("Пожалуйста, подождите. Идет поиск числа (текущее - %zu).\n", hash_len);
             }
+        }
+        else if (cmd == 9)
+        {
+            if (!table_step)
+                table_step = create_hash_table_step(hash_len);
+
+            hash_table_step_fill_from_file(f, table_step, hash_len);
+            rewind(f);
+
+            hash_table_step_print(table_step, hash_len * 2);
         }
         else if (cmd == 0)
         {
