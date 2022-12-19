@@ -205,7 +205,7 @@ size_t nearest_bigger_prime(size_t num)
 
 hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len, size_t mx_dep)
 {
-    size_t cur_mx_dep;
+    // size_t cur_mx_dep;
     hash_elem_t **new;
     size_t divider;
     divider = nearest_bigger_prime(*len);
@@ -232,7 +232,7 @@ hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len, size_t mx
 
 hash_elem_step_t **create_hash_table_step(size_t len)
 {
-    return (hash_elem_step_t **) malloc(len * sizeof(hash_elem_step_t *));
+    return (hash_elem_step_t **) malloc(len * 2 * sizeof(hash_elem_step_t *));
 }
 
 int add_element_hash_table_step(hash_elem_step_t **table, char word[MAX_LEN], size_t len)
@@ -254,38 +254,33 @@ int add_element_hash_table_step(hash_elem_step_t **table, char word[MAX_LEN], si
     return EXIT_SUCCESS;
 }
 
-// void del_element_hash_table(hash_elem_t **table, char word[MAX_LEN], size_t len)
-// {
-//     size_t hash = hash_func(word, len);
-//     hash_elem_t *to_del;
+size_t wrong_hash_elements(hash_elem_step_t **table, size_t len)
+{
+    size_t count = 0;
+    for (size_t i = 0; i < len; i++)
+        if (table[i] && table[i]->hash_index != i)
+        {
+            count++;
+            printf("%4zu (hash = %zu): ", i, table[i]->hash_index);
+            printf("%s\n", table[i]->hash_value.name);
+        }
+    return count;
+}
 
-//     if (!table[hash])
-//     {
-//         printf("Такого слова нет.\n");
-//         return;
-//     }
+hash_elem_step_t **hash_table_step_restructure(hash_elem_t **table, size_t *len, size_t wrong_elems)
+{
+    // size_t cur_mx_dep;
+    hash_elem_step_t **new;
+    size_t divider;
+    divider = nearest_bigger_prime(*len);
+    new = create_hash_table_step(divider);
 
-//     if (!strcmp(word, table[hash]->hash_value.name))
-//     {
-//         to_del = table[hash];
-//         table[hash] = table[hash]->next;
-//         free(to_del);
-//         return;
-//     }
-
-//     hash_elem_t *temp = table[hash];
-//     while (temp->next)
-//     {
-//         to_del = temp->next;
-//         if (!strcmp(word, to_del->hash_value.name))
-//         {
-//             temp->next = to_del->next;
-//             free(to_del);
-//             break;
-//         }
-//         temp = temp->next;
-//     }
-// }
+    for (size_t i = 0; i < *len * 2; i++)
+        if (table[i])
+            add_element_hash_table_step(new, table[i]->hash_value.name, divider);
+    *len = divider;
+    return new;
+}
 
 size_t hash_table_step_find(hash_elem_step_t **table, char word[MAX_LEN], size_t *counter, size_t len, uint64_t *time)
 {
@@ -305,14 +300,22 @@ size_t hash_table_step_find(hash_elem_step_t **table, char word[MAX_LEN], size_t
         tmp++;
         while (tmp < len)
         {
-            if (strcmp(word, table[tmp]->hash_value.name))
-                tmp++;
-            else
+            if (table[tmp])
             {
-                end = tick();
-                *time = end - start;
-                return EXIT_SUCCESS;
+                if (strcmp(word, table[tmp]->hash_value.name))
+                {
+                    tmp++;
+                    (*counter)++;
+                } 
+                else
+                {
+                    end = tick();
+                    *time = end - start;
+                    return EXIT_SUCCESS;
+                }
             }
+            else
+                tmp++;
         }
     }
     return EXIT_FAILURE;
@@ -338,7 +341,7 @@ void hash_table_step_print(hash_elem_step_t **table, size_t len)
     for (size_t i = 0; i < len; i++)
         if (table[i])
         {
-            printf("%4zu: ", i);
+            printf("%4zu (hash = %zu): ", i, table[i]->hash_index);
             printf("%s\n", table[i]->hash_value.name);
         }
 }
@@ -348,87 +351,3 @@ void hash_table_step_free(hash_elem_step_t **table, size_t len)
     for (size_t i = 0; i < len; i++)
         free(table[i]);
 }
-
-// size_t count_collisions(hash_elem_t **table, size_t len)
-// {
-//     size_t collisions = 0;
-//     hash_elem_t *temp;
-//     for (size_t i = 0; i < len; i++)
-//     {
-//         if (table[i] && table[i]->next)
-//         {
-//             temp = table[i];
-//             while (temp)
-//             {
-//                 temp = temp->next;
-//                 collisions++;
-//             }
-//             collisions--;
-//         }
-//     }
-//     return collisions;
-// }
-
-// size_t max_depth(hash_elem_t **table, size_t len)
-// {
-//     size_t mx_dep = 0;
-//     size_t cur_dep = 0;
-//     hash_elem_t *temp;
-//     for (size_t i = 0; i < len; i++)
-//     {
-//         if (table[i] && table[i]->next)
-//         {
-//             temp = table[i];
-//             while (temp)
-//             {
-//                 temp = temp->next;
-//                 cur_dep++;
-//             }
-//             if (cur_dep > mx_dep)
-//                 mx_dep = cur_dep;
-//             cur_dep = 0;
-//         }
-//     }
-//     return mx_dep;
-// }
-
-// int is_prime(int num)
-// {
-//     for (int i = num - 1; i > 1; i--)
-//         if (num % i == 0)
-//             return 0;
-//     return 1;
-// }
-
-// size_t nearest_bigger_prime(size_t num)
-// {
-//     num++;
-//     while (!is_prime(num))
-//         num++;
-//     return num;
-// }
-
-// hash_elem_t **hash_table_restructure(hash_elem_t **table, size_t *len, size_t mx_dep)
-// {
-//     size_t cur_mx_dep;
-//     hash_elem_t **new;
-//     size_t divider;
-//     divider = nearest_bigger_prime(*len);
-//     new = create_hash_table(divider);
-
-//     hash_elem_t *temp;
-//     for (size_t i = 0; i < *len; i++)
-//     {
-//         if (table[i])
-//         {
-//             temp = table[i];
-//             while (temp)
-//             {
-//                 add_element_hash_table(new, temp->hash_value.name, divider);
-//                 temp = temp->next;
-//             }
-//         }
-//     }    
-//     *len = divider;
-//     return new;
-// }

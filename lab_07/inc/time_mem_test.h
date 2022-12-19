@@ -10,6 +10,7 @@ typedef struct
     size_t count_hash_find;
     size_t count_bst_find;
     size_t count_avl_find;
+    size_t count_hash_st_find;
 } compares_t;
 
 typedef struct
@@ -17,6 +18,7 @@ typedef struct
     uint64_t hash_find;
     uint64_t bst_find;
     uint64_t avl_find;
+    uint64_t hash_st_find;
 } times_t;
 
 uint64_t tick(void);
